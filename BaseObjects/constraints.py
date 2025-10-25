@@ -2,11 +2,9 @@ from typing import List
 from datetime import timedelta
 
 class Constraint:
+    pass
 
-    def __init__(self):
-        pass
-
-class ConstraintPause:
+class ConstraintPause(Constraint):
 
     __slots__ = ['num_shifts', 'taken_shifts']
 
@@ -32,7 +30,7 @@ class ConstraintPause:
                 available_shifts.append(period_of_shifts)
 
 
-class ConstraintUnavailable:
+class ConstraintUnavailable(Constraint):
 
     __slots__ = ['times_unavailable']
 
@@ -55,7 +53,7 @@ class ConstraintUnavailable:
 
             available_shifts.append(available_shifts_period)
 
-class ConstraintCapable:
+class ConstraintCapable(Constraint):
 
     __slots__ = ['capable']
 
@@ -76,7 +74,7 @@ class ConstraintCapable:
 
         return available_shifts
 
-class ConstraintMaxShifts:
+class ConstraintMaxShifts(Constraint):
 
     __slots__ = ['max_shifts', 'taken_shifts']
 

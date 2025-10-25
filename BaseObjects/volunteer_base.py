@@ -12,11 +12,11 @@ class VolunteerBase:
     leader: str
     constraints: Optional[List[Constraint]]
 
-    def __init__(self, name, color, leader):
+    def __init__(self, name, color, leader, constraints):
         self.name = name
         self.color = color
         self.leader = leader
-        self.constraints = []
+        self.constraints = constraints
         
     def add_constraint(self, constraint: Constraint):
         self.constraints.append(constraint)
