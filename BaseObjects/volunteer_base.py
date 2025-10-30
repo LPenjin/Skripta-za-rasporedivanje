@@ -54,6 +54,16 @@ class VolunteerBase:
             for constraint in self.constraints:
                     availability_list.append(constraint.get_available_shifts(shifts, self.taken_shifts))
 
+            availability_list_leader = []
+            for shift_period in shifts:
+                available_shifts_period = []
+                for shift in shift_period:
+                    if not shift.leader:
+                        available_shifts_period.append(shift)
+                availability_list_leader.append(available_shifts_period)
+
+            availability_list.append(availability_list_leader)
+
             availability_intersection = []
             for shift_period in range(len(availability_list[0])):
                 intersection = [

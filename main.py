@@ -44,19 +44,9 @@ def main():
 
     volunteers = ExcelReader.get_volunteers(args.sheet_name)
 
-    shift_base = ShiftBase('stakla', 2.0, datetime.strptime('22:00', "%H:%M"))
+    shift_base = ShiftBase('stakla', 2.0, datetime.strptime('20:00', "%H:%M"))
 
     shifts = shift_base.create_shifts(people_per_position, hard_per_position)
-
-    while not Sorter.all_shifts_hard(shifts) and Sorter.get_volunteer_hard_shifts_num(volunteers, shifts) > 0:
-        Sorter.sort(volunteers, shifts)
-        volunteer_index = 0
-
-        for volunteer in volunteers:
-            shift_taken = False
-            volunteer_index += 1
-            available_shifts = volunteer.get_availability_hard(shifts)
-            place_into_shift(available_shifts, shift_taken, shifts, volunteer)
 
     while not Sorter.all_shifts_leader(shifts) and Sorter.get_volunteer_leader_shifts_num(volunteers, shifts) > 0:
         Sorter.sort(volunteers, shifts)
@@ -67,6 +57,16 @@ def main():
             volunteer_index += 1
             available_shifts = volunteer.get_availability_leader(shifts)
             place_into_shift_leader(available_shifts, shift_taken, shifts, volunteer)
+
+    while not Sorter.all_shifts_hard(shifts) and Sorter.get_volunteer_hard_shifts_num(volunteers, shifts) > 0:
+        Sorter.sort(volunteers, shifts)
+        volunteer_index = 0
+
+        for volunteer in volunteers:
+            shift_taken = False
+            volunteer_index += 1
+            available_shifts = volunteer.get_availability_hard(shifts)
+            place_into_shift(available_shifts, shift_taken, shifts, volunteer)
 
     while not Sorter.all_shifts_full(shifts) and Sorter.get_volunteer_shifts_num(volunteers, shifts) > 0:
         Sorter.sort(volunteers, shifts)

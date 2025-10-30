@@ -145,7 +145,7 @@ class ExcelReader:
                 # Add volunteers under shift
                 for v in shift.volunteers:
                     ws1.append([
-                        "", "", "", "", "", "", f'{v.name} ({v.section})'
+                        "", "", "", "", "", "", "", f'{v.name} ({v.section})'
                     ])
 
         # --- Sheet 2: Volunteers sorted by number of taken shifts ---
