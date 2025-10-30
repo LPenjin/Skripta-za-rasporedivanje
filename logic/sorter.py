@@ -27,6 +27,16 @@ class Sorter:
         return True
 
     @staticmethod
+    def all_shifts_hard(shifts) -> bool:
+        for shift_period in shifts:
+            for shift in shift_period:
+                if not shift.hard:
+                    continue
+                if len(shift.volunteers) <= shift.num_volunteers:
+                    return False
+        return True
+
+    @staticmethod
     def all_shifts_leader(shifts) -> bool:
         for shift_period in shifts:
             for shift in shift_period:
@@ -42,4 +52,9 @@ class Sorter:
     @staticmethod
     def get_volunteer_leader_shifts_num(volunteer_list, shifts):
         return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_leader(shifts)])
+                    for volunteer in volunteer_list])
+
+    @staticmethod
+    def get_volunteer_hard_shifts_num(volunteer_list, shifts):
+        return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_hard(shifts)])
                     for volunteer in volunteer_list])

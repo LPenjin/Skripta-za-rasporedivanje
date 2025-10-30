@@ -12,7 +12,7 @@ class ExcelReaderExt:
 
     @staticmethod
     def get_capable(row) -> ConstraintCapable:
-        return ConstraintCapable(True if row[3] == 'True' else False)
+        return ConstraintCapable(row[3])
 
     @staticmethod
     def get_pause(row) -> ConstraintPause:
@@ -40,6 +40,10 @@ class ExcelReaderExt:
                                            datetime.strptime(time_unavailable[1], "%H:%M")]
                 if times_unavailable[time][1] < times_unavailable[time][0]:
                     times_unavailable[time][1] = times_unavailable[time][1] + timedelta(days=1)
+                elif 0 <= times_unavailable[time][0].hour < 8 and 0 <= times_unavailable[time][1].hour < 8:
+                    times_unavailable[time][0] = times_unavailable[time][0] + timedelta(days=1)
+                    times_unavailable[time][1] = times_unavailable[time][1] + timedelta(days=1)
+
             return ConstraintUnavailable(times_unavailable)
         else:
             return ConstraintUnavailable([])
@@ -70,7 +74,7 @@ class ExcelReader:
             else:
                 row_cells = row.tolist()
                 volunteers.append(VolunteerBase(row_cells[0], row_cells[1], row_cells[2],
-                                                ExcelReaderExt.get_constraints(row_cells)))
+                                                ExcelReaderExt.get_constraints(row_cells), row_cells[7]))
 
         return volunteers
 
@@ -100,7 +104,7 @@ class ExcelReader:
                 break
             else:
                 row_cells = row.tolist()
-                row_cells = [True if cell == 'True' else False for cell in row_cells]
+                row_cells = [cell for cell in row_cells]
                 hard_per_position.append(row_cells)
 
         return hard_per_position
@@ -111,17 +115,18 @@ class ExcelReader:
 
         # --- Sheet 1: Shifts ---
         ws1 = wb.active
-        ws1.title = "Shifts"
+        ws1.title = "Smjene"
 
         # Header
         ws1.append([
-            "Group Index",
-            "Start Time",
-            "Duration (h)",
-            "Hard Shift",
-            "Num Volunteers",
-            "Leader",
-            "Volunteer"
+            "Smjena po redu",
+            "Pozicija",
+            "Početak smjene",
+            "Trajanje",
+            "Teška",
+            "Broj volontera",
+            "Voditelj smjene",
+            "Volonteri"
         ])
 
         for group_idx, shifts in enumerate(shifts_groups, start=1):
@@ -129,22 +134,23 @@ class ExcelReader:
                 # Add shift row
                 ws1.append([
                     group_idx,
-                    shift.start.strftime("%Y-%m-%d %H:%M") if isinstance(shift.start, datetime) else shift.start,
+                    shift.position,
+                    shift.start.strftime("%H:%M") if isinstance(shift.start, datetime) else shift.start,
                     shift.duration,
-                    "Yes" if shift.hard else "No",
-                    shift.num_volunteers,
-                    shift.leader.name if shift.leader else "",
+                    "Da" if shift.hard else "Ne",
+                    f'{len(shift.volunteers)}/{str(shift.num_volunteers)}',
+                    f'{shift.leader.name} ({shift.leader.section}' if shift.leader else "",
                     ""  # Volunteer placeholder
                 ])
                 # Add volunteers under shift
                 for v in shift.volunteers:
                     ws1.append([
-                        "", "", "", "", "", "", v.name
+                        "", "", "", "", "", "", f'{v.name} ({v.section})'
                     ])
 
         # --- Sheet 2: Volunteers sorted by number of taken shifts ---
-        ws2 = wb.create_sheet("Volunteers")
-        ws2.append(["Name", "Leader", "Color", "Constraints Count", "Taken Shifts"])
+        ws2 = wb.create_sheet("Volonteri")
+        ws2.append(["Ime i prezime", "Sekcija", "Voditelj", "Članstvo", "Broj smjena"])
 
         # Sort volunteers descending by number of taken shifts
         sorted_volunteers = sorted(
@@ -156,10 +162,11 @@ class ExcelReader:
         for v in sorted_volunteers:
             ws2.append([
                 v.name,
+                v.section,
                 v.leader,
                 getattr(v.color, "name", str(v.color)) if v.color else "",
                 len(v.constraints) if v.constraints else 0,
-                len(v.taken_shifts) if hasattr(v, "taken_shifts") else 0
+                len(v.taken_shifts) if hasattr(v, "taken_shifts") else 0,
             ])
 
         wb.save(filename)
