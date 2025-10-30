@@ -36,6 +36,8 @@ def place_into_shift_leader(available_shifts: list, shift_taken: bool, shifts,
 def main():
     parser = argparse.ArgumentParser(description='Excel ingestion')
     parser.add_argument('-s', '--sheet-name', required=True, type=str, help='Name of the sheet to be ingested')
+    parser.add_argument('-d', '--duration', type=float, default=2.0, help='Duration of each shift')
+    parser.add_argument('-p', '--pocetak', type=str, default='20:00', help='Start of event')
 
     args = parser.parse_args()
 
@@ -45,7 +47,7 @@ def main():
 
     volunteers = ExcelReader.get_volunteers(args.sheet_name)
 
-    shift_base = ShiftBase('stakla', 2.0, datetime.strptime('20:00', "%H:%M"))
+    shift_base = ShiftBase(args.sheet_name[:-5], args.duration, datetime.strptime(args.pocetak, "%H:%M"))
 
     shifts = shift_base.create_shifts(people_per_position, hard_per_position)
 

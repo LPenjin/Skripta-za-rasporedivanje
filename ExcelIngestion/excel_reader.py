@@ -139,7 +139,7 @@ class ExcelReader:
                     shift.duration,
                     "Da" if shift.hard else "Ne",
                     f'{len(shift.volunteers)}/{str(shift.num_volunteers)}',
-                    f'{shift.leader.name} ({shift.leader.section}' if shift.leader else "",
+                    f'{shift.leader.name} ({shift.leader.section})' if shift.leader else "",
                     ""  # Volunteer placeholder
                 ])
                 # Add volunteers under shift
