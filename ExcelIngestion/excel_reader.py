@@ -150,7 +150,7 @@ class ExcelReader:
 
         # --- Sheet 2: Volunteers sorted by number of taken shifts ---
         ws2 = wb.create_sheet("Volonteri")
-        ws2.append(["Ime i prezime", "Sekcija", "Voditelj", "Članstvo", "Broj smjena"])
+        ws2.append(["Ime i prezime", "Sekcija", "Voditelj smjene", "Članstvo", "Broj smjena"])
 
         # Sort volunteers descending by number of taken shifts
         sorted_volunteers = sorted(
@@ -165,7 +165,6 @@ class ExcelReader:
                 v.section,
                 v.leader,
                 getattr(v.color, "name", str(v.color)) if v.color else "",
-                len(v.constraints) if v.constraints else 0,
                 len(v.taken_shifts) if hasattr(v, "taken_shifts") else 0,
             ])
 
