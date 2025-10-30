@@ -41,10 +41,7 @@ class VolunteerBase:
             if not isinstance(constraint, ConstraintCapable):
                 availability_list.append(constraint.get_available_shifts(shifts, self.taken_shifts))
 
-        availability_intersection = []
-        for shift_period in range(len(availability_list[0])):
-            intersection = [set.intersection(*(set(available_shifts[shift_period]) for available_shifts in availability_list))]
-            availability_intersection.append(list(intersection[0]))
+        availability_intersection = self.get_availability_intersection(availability_list)
 
         return availability_intersection
 
@@ -52,6 +49,7 @@ class VolunteerBase:
         if self.leader:
             availability_list = []
             for constraint in self.constraints:
+                if not isinstance(constraint, ConstraintCapable):
                     availability_list.append(constraint.get_available_shifts(shifts, self.taken_shifts))
 
             availability_list_leader = []
@@ -64,26 +62,35 @@ class VolunteerBase:
 
             availability_list.append(availability_list_leader)
 
-            availability_intersection = []
-            for shift_period in range(len(availability_list[0])):
-                intersection = [
-                    set.intersection(*(set(available_shifts[shift_period]) for available_shifts in availability_list))]
-                availability_intersection.append(list(intersection[0]))
+            availability_intersection = self.get_availability_intersection(availability_list)
 
             return availability_intersection
         else:
             return [[] for _ in range(len(shifts))]
+
+    @staticmethod
+    def get_availability_intersection(availability_list):
+        availability_intersection = []
+        for shift_period in range(len(availability_list[0])):
+            intersection = [
+                set.intersection(*(set(available_shifts[shift_period]) for available_shifts in availability_list))]
+            availability_intersection.append(list(intersection[0]))
+        return availability_intersection
 
     def get_availability_hard(self, shifts):
             availability_list = []
             for constraint in self.constraints:
                 availability_list.append(constraint.get_available_shifts(shifts, self.taken_shifts))
 
-            availability_intersection = []
-            for shift_period in range(len(availability_list[0])):
-                intersection = [
-                    set.intersection(*(set(available_shifts[shift_period]) for available_shifts in availability_list))]
-                availability_intersection.append(list(intersection[0]))
+            availability_intersection = self.get_availability_intersection(availability_list)
+
+            return availability_intersection
+
+    def get_availability_leader_hard(self, shifts):
+            availability_hard = self.get_availability_hard(shifts)
+            availability_leader = self.get_availability_leader(shifts)
+
+            availability_intersection = self.get_availability_intersection([availability_leader, availability_hard])
 
             return availability_intersection
 

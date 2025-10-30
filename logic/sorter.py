@@ -58,3 +58,8 @@ class Sorter:
     def get_volunteer_hard_shifts_num(volunteer_list, shifts):
         return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_hard(shifts)])
                     for volunteer in volunteer_list])
+
+    @staticmethod
+    def get_volunteer_leader_hard_shifts_num(volunteer_list, shifts):
+        return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_leader_hard(shifts)])
+                    for volunteer in volunteer_list])

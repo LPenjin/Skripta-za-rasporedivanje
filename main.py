@@ -1,6 +1,7 @@
 from datetime import datetime
 import argparse
 from BaseObjects.shift import ShiftBase
+from BaseObjects.volunteer_base import VolunteerBase
 from ExcelIngestion.excel_reader import ExcelReader
 from logic.sorter import Sorter
 
@@ -47,6 +48,17 @@ def main():
     shift_base = ShiftBase('stakla', 2.0, datetime.strptime('20:00', "%H:%M"))
 
     shifts = shift_base.create_shifts(people_per_position, hard_per_position)
+
+    while not Sorter.all_shifts_leader(shifts) and Sorter.get_volunteer_leader_hard_shifts_num(volunteers, shifts) > 0:
+        Sorter.sort(volunteers, shifts)
+        volunteer_index = 0
+
+        for volunteer in volunteers:
+            shift_taken = False
+            volunteer_index += 1
+            available_shifts = volunteer.get_availability_leader_hard(shifts)
+            place_into_shift_leader(available_shifts, shift_taken, shifts, volunteer)
+
 
     while not Sorter.all_shifts_leader(shifts) and Sorter.get_volunteer_leader_shifts_num(volunteers, shifts) > 0:
         Sorter.sort(volunteers, shifts)
