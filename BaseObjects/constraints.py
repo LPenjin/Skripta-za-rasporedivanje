@@ -24,7 +24,7 @@ class ConstraintPause(Constraint):
             available = True
             for taken_shift in taken_shifts:
                 if (taken_shift.start - timedelta(hours=taken_shift.duration) * self.num_shifts <= period_of_shifts[0].start \
-                    < taken_shift.start + timedelta(hours=taken_shift.duration) * self.num_shifts):
+                    <= taken_shift.start + timedelta(hours=taken_shift.duration) * self.num_shifts):
                     available = False
             if available:
                 available_shifts.append(period_of_shifts)
