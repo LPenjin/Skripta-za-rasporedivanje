@@ -1,10 +1,13 @@
-import pandas as pd
-from BaseObjects.volunteer_base import VolunteerBase
-from BaseObjects.constraints import ConstraintUnavailable, ConstraintPause, ConstraintCapable, ConstraintMaxShifts, Constraint
-from typing import List
-from math import isnan
 from datetime import datetime, timedelta
+from math import isnan
+from typing import List
+
+import pandas as pd
 from openpyxl import Workbook
+
+from BaseObjects.constraints import ConstraintUnavailable, ConstraintPause, ConstraintCapable, ConstraintMaxShifts, \
+    Constraint
+from BaseObjects.volunteer_base import VolunteerBase
 
 
 class ExcelReaderExt:
@@ -94,20 +97,20 @@ class ExcelReader:
         return people_per_position
 
     @staticmethod
-    def get_hard_per_position(file_path: str) -> List[List[bool]]:
+    def get_difficult_per_position(file_path: str) -> List[List[bool]]:
         df = ExcelReader.read_excel_file(file_path, 'Težina po smjeni')
         df = df.dropna(how='all')
 
-        hard_per_position = []
+        difficult_per_position = []
         for i, row in df.iterrows():
             if row.isnull().all():
                 break
             else:
                 row_cells = row.tolist()
                 row_cells = [cell for cell in row_cells]
-                hard_per_position.append(row_cells)
+                difficult_per_position.append(row_cells)
 
-        return hard_per_position
+        return difficult_per_position
 
     @staticmethod
     def export_shifts_and_volunteers_to_excel(shifts_groups, all_volunteers, filename="shifts_and_volunteers.xlsx"):
@@ -137,7 +140,7 @@ class ExcelReader:
                     shift.position,
                     shift.start.strftime("%H:%M") if isinstance(shift.start, datetime) else shift.start,
                     shift.duration,
-                    "Da" if shift.hard else "Ne",
+                    "Da" if shift.difficult else "Ne",
                     f'{len(shift.volunteers)}/{str(shift.num_volunteers)}',
                     f'{shift.leader.name} ({shift.leader.section})' if shift.leader else "",
                     ""  # Volunteer placeholder

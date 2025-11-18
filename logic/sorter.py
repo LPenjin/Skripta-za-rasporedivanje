@@ -1,7 +1,7 @@
-from BaseObjects.constraints import Constraint, ConstraintUnavailable, ConstraintCapable, ConstraintPause, ConstraintMaxShifts
+from typing import List
+
 from BaseObjects.shift import IndividualShift
 from BaseObjects.volunteer_base import VolunteerBase
-from typing import List
 
 
 class Sorter:
@@ -27,10 +27,10 @@ class Sorter:
         return True
 
     @staticmethod
-    def all_shifts_hard(shifts) -> bool:
+    def all_shifts_difficult(shifts) -> bool:
         for shift_period in shifts:
             for shift in shift_period:
-                if not shift.hard:
+                if not shift.difficult:
                     continue
                 if len(shift.volunteers) <= shift.num_volunteers:
                     return False
@@ -55,11 +55,11 @@ class Sorter:
                     for volunteer in volunteer_list])
 
     @staticmethod
-    def get_volunteer_hard_shifts_num(volunteer_list, shifts):
-        return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_hard(shifts)])
+    def get_volunteer_difficult_shifts_num(volunteer_list, shifts):
+        return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_difficult(shifts)])
                     for volunteer in volunteer_list])
 
     @staticmethod
-    def get_volunteer_leader_hard_shifts_num(volunteer_list, shifts):
-        return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_leader_hard(shifts)])
+    def get_volunteer_leader_difficult_shifts_num(volunteer_list, shifts):
+        return sum([sum([len(shifts_available) for shifts_available in volunteer.get_availability_leader_difficult(shifts)])
                     for volunteer in volunteer_list])

@@ -1,8 +1,6 @@
-from typing import List
 from datetime import timedelta
 
 class Constraint:
-
 
     def get_available_shifts(self, shifts, taken_shifts):
         pass
@@ -80,7 +78,7 @@ class ConstraintCapable(Constraint):
         for period_of_shifts in shifts:
             available_shifts_period = []
             for shift in period_of_shifts:
-                if not shift.is_full() and self.capable == shift.hard:
+                if not shift.is_full() and self.capable == shift.difficult:
                     available_shifts_period.append(shift)
             available_shifts.append(available_shifts_period)
 

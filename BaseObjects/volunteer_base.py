@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
+
 from BaseObjects.constraints import Constraint, ConstraintCapable
-from functools import reduce
 
 
 class VolunteerBase:
@@ -77,7 +77,7 @@ class VolunteerBase:
             availability_intersection.append(list(intersection[0]))
         return availability_intersection
 
-    def get_availability_hard(self, shifts):
+    def get_availability_difficult(self, shifts):
             availability_list = []
             for constraint in self.constraints:
                 availability_list.append(constraint.get_available_shifts(shifts, self.taken_shifts))
@@ -86,11 +86,11 @@ class VolunteerBase:
 
             return availability_intersection
 
-    def get_availability_leader_hard(self, shifts):
-            availability_hard = self.get_availability_hard(shifts)
+    def get_availability_leader_difficult(self, shifts):
+            availability_difficult = self.get_availability_difficult(shifts)
             availability_leader = self.get_availability_leader(shifts)
 
-            availability_intersection = self.get_availability_intersection([availability_leader, availability_hard])
+            availability_intersection = self.get_availability_intersection([availability_leader, availability_difficult])
 
             return availability_intersection
 
